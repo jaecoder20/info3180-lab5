@@ -4,7 +4,7 @@ Jinja2 Documentation:    https://jinja.palletsprojects.com/
 Werkzeug Documentation:  https://werkzeug.palletsprojects.com/
 This file creates your application.
 """
-from flask import Flask, request, jsonify
+from flask import Flask, make_response, request, jsonify
 from app import app
 from flask import render_template, request, redirect, url_for, flash, send_from_directory
 from app.forms import MovieForm
@@ -44,17 +44,17 @@ def movies():
         db.session.commit()
         data = {
             "message": "Movie Successfully added",
-            "title": title,
+            "title": title[0],
             "poster": poster_name,
-            "description": description 
+            "description": description[0] 
         }
     else:
         data = {
             "errors":[
-                {error} for error in form_errors()
+                {error.split(" - ")[0]:error.split(" - ")[1]} for error in form_errors(form)
                     ]
         }
-    return jsonify(data)
+    return make_response(data,200)
 
 
 

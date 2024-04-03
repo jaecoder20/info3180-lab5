@@ -5,6 +5,7 @@ from flask_migrate import Migrate
 app = Flask(__name__)
 app.config.from_object(Config)
 db = SQLAlchemy(app)
+#app.config['WTF_CSRF_ENABLED'] = False
 migrate = Migrate(app, db) 
 from app import models
 

@@ -12,7 +12,7 @@ from .models import Movies
 from werkzeug.utils import secure_filename
 from app import app, db
 import os
-
+from flask_wtf.csrf import generate_csrf
 
 ###
 # Routing for your application.
@@ -56,7 +56,9 @@ def movies():
         }
     return make_response(data,200)
 
-
+@app.route('/api/v1/csrf-token', methods=['GET'])
+def get_csrf():
+ return jsonify({'csrf_token': generate_csrf()})
 
 
 

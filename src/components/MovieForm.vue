@@ -1,4 +1,9 @@
 <script setup>
+    let flashMessages = ref([]);
+    let displayFlash = ref(false);
+    let isSuccess = ref(false);
+    const alertSuccessClass = 'alert-success';
+    const alertErrorClass = 'alert-danger';
     import { ref, onMounted } from "vue";
     onMounted(() => {
     getCsrfToken();
@@ -12,6 +17,19 @@
     csrf_token.value = data.csrf_token;
     })
  } 
+ function getFlashedErrors(errors){
+    
+    const errorStrings = [];
+    errors.forEach(errorObject => {
+    const key = Object.keys(errorObject)[0];
+    const value = Object.values(errorObject)[0];
+    errorStrings.push(`${key}: ${value}`);
+    });
+    for (let i=0;i<errorStrings.length;i++){
+
+        flashMessages.value.push(errorStrings[i]);
+    }
+ }
     function saveMovie(){
         let movieForm = document.getElementById('movieForm');
         let form_data = new FormData(movieForm);
@@ -26,15 +44,25 @@
             return response.json();
             })
             .then(function (data) {
-            // display a success message
-            console.log(data);
+                if(data["errors"]==undefined){
+                    displayFlash.value = true;
+                    isSuccess.value = true;
+                    flashMessages.value.push('Movie added successfully!');
+                }else{
+                    displayFlash.value = true;
+                    isSuccess.value = false;
+                    getFlashedErrors(data.errors)
+                }
             })
             .catch(function (error) {
-            console.log(error);
+                console.log(error)
             });
     }
 </script>
 <template>
+        <div v-for="(message, index) in flashMessages" :key="index" v-bind:class="[isSuccess ? alertSuccessClass : alertErrorClass]" class="alert">
+            {{ message }}
+        </div>
   <form class="col-sm-6 justify-items-center" id="movieForm" @submit.prevent="saveMovie">
     <div class="form-group mb-3">
         <label class="form-label" for="title">Title</label><br>

@@ -27,6 +27,7 @@ function fetchPoster(movie) {
     })
     .then(response => response.json())
     .then(data => {
+        console.log(data)
         movie.poster = data.posterURL;
     })
     .catch(error => console.error(error));
